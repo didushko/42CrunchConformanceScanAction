@@ -19,3 +19,12 @@ branding:
 runs:
   using: "docker"
   image: "Dockerfile"
+  args:
+    - python
+    - cicd_python/runScan.py
+    - --api-token
+    - ${{ inputs.api-token }}
+    - --platform-url
+    - ${{ inputs.platform-url }}
+    - --report-path
+    - ${{ inputs.report-path }}
