@@ -29,7 +29,6 @@ def produceSarifFromScanReports(scanReports):
         for path, pathObj in report["paths"].items():
             for method, methodObj in pathObj.items():
                 if "conformanceRequestIssues" in methodObj:
-                    print(1)
                     for issue in methodObj["conformanceRequestIssues"]:
                         test = issue["test"]
                         if not file in sarifFiles:
