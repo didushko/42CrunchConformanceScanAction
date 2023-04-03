@@ -27,6 +27,7 @@ def main():
     audited = report_service.read_audited_ids_from_report(path_to_report)
     scanReports = {}
     for file, api_id in audited.items():
+        print(file)
         scan_token = scan_service.getScanToken(api_id, platformSettings)
         report = scan_service.runScanDocker(
             scan_token, api_id, platformSettings)

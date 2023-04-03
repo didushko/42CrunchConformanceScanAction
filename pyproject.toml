@@ -11,6 +11,8 @@ python = "^3.9"
 requests = "^2.28.2"
 docker = "^6.0.1"
 arguments = "^76"
+jsonpointer = "^2.3"
+ruamel-yaml = "^0.17.21"
 
 [tool.poetry.scripts]
 runScan = "cicd_python.runScan:main"

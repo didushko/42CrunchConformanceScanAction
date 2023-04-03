@@ -1,3 +1,4 @@
+import cicd_python.parser as parser
 
 
 def produceSarifFromScanReports(scanReports):
@@ -29,6 +30,7 @@ def produceSarifFromScanReports(scanReports):
         for path, pathObj in report["paths"].items():
             for method, methodObj in pathObj.items():
                 if "conformanceRequestIssues" in methodObj:
+                    print(f"{file}, finded conformanceRequestIssues")
                     for issue in methodObj["conformanceRequestIssues"]:
                         test = issue["test"]
                         if not file in sarifFiles:
@@ -39,6 +41,9 @@ def produceSarifFromScanReports(scanReports):
                                     "uri": file,
                                 },
                             }
+                        parsedFile = parser.parseFile(file)
+                        line, col = parser.getLineAndCol(
+                            test["jsonPointer"], parsedFile)
                         sarifRepresentation = {
                             "level": "error",
                             "ruleId": test["key"],
@@ -53,8 +58,8 @@ def produceSarifFromScanReports(scanReports):
                                             "index": sarifArtifactIndices[file],
                                         },
                                         "region": {
-                                            "startLine": 1,
-                                            "startColumn": 1,
+                                            "startLine": line,
+                                            "startColumn": col,
                                         },
                                     },
                                 },

@@ -8,8 +8,7 @@ import json
 def _getHeaders(config):
     return {
         "Content-Type": "application/json",
-        "X-API-KEY": config["api_key"],
-        # "X-42C-IDE": "true"
+        "X-API-KEY": config["api_key"]
     }
 
 
