@@ -1,3 +1,7 @@
 #!/bin/bash
 
-runScan -k=$api_token -rp=$report_path -pu=$platform_url
+if [ -n "$command" ]; then
+  eval "$command"
+else
+  xliic_scan --api_key=$api_token --platform_url=$platform_url json-report check-sqg $report_path
+fi

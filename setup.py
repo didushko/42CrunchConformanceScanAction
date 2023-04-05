@@ -1,12 +1,15 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name="cicd_python",
-    version="1.0.0",
-    packages=["cicd_python"],
+    name="x42Crunch_python_sdk",
+    version="0.1",
+    py_modules=["x42crunch_python_sdk"],
+    packages=find_packages(),
+    include_package_data=True,
+    install_requires=["click"],
     entry_points={
-        "console_scripts": [
-            "runScan = cicd_python.runScan:main"
-        ]
-    }
+        'console_scripts': [
+            'xliic_scan = x42crunch_python_sdk.scripts.xliic_scan:_scan',
+        ],
+    },
 )

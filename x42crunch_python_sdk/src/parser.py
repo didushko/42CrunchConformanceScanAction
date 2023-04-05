@@ -10,7 +10,7 @@ def parseFile(path):
 
             return ruamel.yaml.round_trip_load(f)
         else:
-            raise ValueError(f"File at {path} is neither JSON nor YAML")
+            raise ValueError(f"File at {path} is neither JSON or YAML")
 
 
 def getLineAndCol(jsonPointer, parsedFile):

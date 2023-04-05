@@ -1,4 +1,4 @@
-import cicd_python.parser as parser
+import x42crunch_python_sdk.src.parser as parser
 
 
 def produceSarifFromScanReports(scanReports):
@@ -30,7 +30,6 @@ def produceSarifFromScanReports(scanReports):
         for path, pathObj in report["paths"].items():
             for method, methodObj in pathObj.items():
                 if "conformanceRequestIssues" in methodObj:
-                    print(f"{file}, finded conformanceRequestIssues")
                     for issue in methodObj["conformanceRequestIssues"]:
                         test = issue["test"]
                         if not file in sarifFiles:

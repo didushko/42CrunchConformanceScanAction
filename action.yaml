@@ -9,8 +9,16 @@ inputs:
     required: false
     default: "https://platform.42crunch.com"
   report-path:
-    required: true
+    required: false
+    default: report.json
     description: "Path to JSON report from audit step"
+  sarif-path:
+    required: false
+    default: report.sarif
+    description: "Name of SARIF report path"
+  command: 
+    required: false
+    description: "Command sdk you want to use"
 
 
 branding:
@@ -23,6 +31,8 @@ runs:
     api_token: ${{ inputs.api-token }}
     platform_url: ${{ inputs.platform-url }}
     report_path: ${{ inputs.report-path }}
+    sarif_path: ${{inputs.sarif-path}}
+    command: ${{inputs.command}}
   # args:
   #     - env
   #     - API_TOKEN=${API_TOKEN}
