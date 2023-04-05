@@ -57,14 +57,14 @@ def _jsonReportConvertToSarif(scan, report_path, sarif_path):
     scanService = scan_service.ScanService(scan.api_key, scan.platform_url)
     for file, api_id in audited.items():
         print(f"{file} with ApiId {api_id}")
-        # # scanService.create_default_scan_configuration(api_id)
-        # # scanId = scanService.read_default_scanId(api_id)
+        # scanService.create_default_scan_configuration(api_id)
+        # scanId = scanService.read_default_scanId(api_id)
         # scanConfiguration = scanService.read_scan_configuration(scanId)
-        # token = scanConfiguration["scanConfigurationToken"]
+        # token = scanConfiguration["token"]
         # print(f"Got scan token for Api {api_id}")
-        # scanService.runScanDocker(token)
+        # scanService.runScanDocker(token,"services.dev.42crunch.com:8001")
         reportId = scanService.waitScanReport(api_id)
-        report =scanService.readScanReport(reportId)
+        report = scanService.readScanReport(reportId)
         scanReports[file] = report
     sarif = sarif_service.produceSarifFromScanReports(scanReports)
     with open(f"{sarif_path}", "w") as outfile:
@@ -86,15 +86,4 @@ def _byReport(scan, report_path):
         with open("compl.json", "w") as outfile:
             json.dump(compl, outfile, indent=4)
     sqgs = scanService.getScanSQGS()
-    if "processingDetails" in compl: 
-       errors = []
-       for details in compl["processingDetails"]:
-           for sqg in sqgs["list"]:
-               if sqg["id"] == details["blockingSqgId"]:
-                   name = sqg["name"]
-                   blockingRules =details["blockingRules"]
-                   errors.append(f"Fail SQG \"{name}\" blocking by rules: {blockingRules}")
-       if len(errors)>0:
-           errors = '\n'.join(str(item) for item in errors)
-           raise Exception(f"Fails next scan SQG's: \n{errors}")
-    print("All SQG's pass successfull")
+    scanService.checkSqg(sqgs, compl)

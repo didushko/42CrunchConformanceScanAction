@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "x42crunch_python_sdk"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
 requests = "^2.28.2"
 jsonpointer = "^2.3"
 ruamel-yaml = "^0.17.21"

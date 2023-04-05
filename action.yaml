@@ -9,8 +9,7 @@ inputs:
     required: false
     default: "https://platform.42crunch.com"
   report-path:
-    required: false
-    default: report.json
+    required: true
     description: "Path to JSON report from audit step"
   sarif-path:
     required: false
@@ -28,15 +27,8 @@ runs:
   using: "docker"
   image: "Dockerfile"
   env:
-    api_token: ${{ inputs.api-token }}
-    platform_url: ${{ inputs.platform-url }}
+    X42_API_KEY: ${{ inputs.api-token }}
+    X42_PLATFORM_URL: ${{ inputs.platform-url }}
     report_path: ${{ inputs.report-path }}
     sarif_path: ${{inputs.sarif-path}}
     command: ${{inputs.command}}
-  # args:
-  #     - env
-  #     - API_TOKEN=${API_TOKEN}
-  #     - PLATFORM_URL=${PLATFORM_URL}
-  #     - REPORT_PATH=${REPORT_PATH}
-  # args:
-  #   - -e --api-token=${{ inputs.api-token }} --platform-url=${{ inputs.platform-url }} --report-path=${{ inputs.report-path }}
