@@ -1,7 +1,7 @@
 import jsonpointer
 import ruamel.yaml
 
-
+#snake
 def parseFile(path):
     with open(path) as f:
         if path.endswith('.yaml') or path.endswith('.yml'):

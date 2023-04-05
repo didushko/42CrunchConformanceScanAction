@@ -5,16 +5,16 @@ import json
 import docker
 
 
-class ScanService:
+class Scan_Client:
     def __init__(self, api_key, platform_url):
         self.api_key = api_key
         self.platform_url = platform_url
-        self.headers = _getHeaders(api_key)
+        self.headers = _get_headers(api_key)
 
     def read_default_scanId(self, api_id):
         MAX_RETRY_TIME = 30
         RETRY_TIME = 1
-        url = _getUrl(
+        url = _get_url(
             f"api/v2/apis/{api_id}/scanConfigurations", self.platform_url)
 
         start_time = time.time()
@@ -28,7 +28,7 @@ class ScanService:
         raise Exception(f"Can't read list configuration for api_id {api_id}")
 
     def create_default_scan_configuration(self, api_id):
-        url = _getUrl(
+        url = _get_url(
             f"api/v2/apis/{api_id}/scanConfigurations/default", self.platform_url
         )
         data = {"name": "defailt"}
@@ -41,21 +41,21 @@ class ScanService:
                 f"Can't get configuration for api with id {api_id}, error: {response.text}"
             )
 
-    def read_scan_configuration(self, configId):
-        url = _getUrl(
-            f"api/v2/scanConfigurations/{configId}", self.platform_url)
+    def read_scan_configuration(self, config_id):
+        url = _get_url(
+            f"api/v2/scanConfigurations/{config_id}", self.platform_url)
         response = requests.get(url, headers=self.headers)
         if response.ok:
             return response.json()
         else:
             raise Exception(
-                f"Can't read scan configuration with id {configId}, error: {response.text}"
+                f"Can't read scan configuration with id {config_id}, error: {response.text}"
             )
 
-    def waitScanReport(self, api_id):
+    def wait_scan_report(self, api_id):
         MAX_RETRY_TIME = 30
         RETRY_TIME = 1
-        url = _getUrl(f"api/v2/apis/{api_id}/scanReports", self.platform_url)
+        url = _get_url(f"api/v2/apis/{api_id}/scanReports", self.platform_url)
 
         start_time = time.time()
         while time.time() <= start_time + MAX_RETRY_TIME:
@@ -69,8 +69,8 @@ class ScanService:
             f"Can't read list scanReports for api_id {api_id}, response = {response.text}"
         )
 
-    def readScanReport(self, taskId):
-        url = _getUrl(f"api/v2/scanReports/{taskId}", self.platform_url)
+    def read_scan_report(self, task_id):
+        url = _get_url(f"api/v2/scanReports/{task_id}", self.platform_url)
         response = requests.get(url, headers=self.headers)
         if response.ok:
             return json.loads(
@@ -80,14 +80,16 @@ class ScanService:
             )
         else:
             raise Exception(
-                f"Can't read scan report with id {taskId}, error: {response.text}"
+                f"Can't read scan report with id {task_id}, error: {response.text}"
             )
 
-    def runScanDocker(self, scan_token, serviseApi):
+    def run_scan_docker(self,
+                        scan_token, container="42crunch/scand-agent:v2.0.0-rc05",
+                        servise_api="services.dev.42crunch.com:8001"):
         client = docker.from_env()
         env_vars = {
             "SCAN_TOKEN": scan_token,
-            "PLATFORM_SERVICE": serviseApi,
+            "PLATFORM_SERVICE": servise_api,
         }
         container = client.containers.run(
             "42crunch/scand-agent:v2.0.0-rc05", environment=env_vars, detach=True
@@ -95,26 +97,28 @@ class ScanService:
         container.wait()
         print(container.logs().decode("utf-8"))
 
-    def getScanSQGS(self):
-        url = _getUrl("/api/v2/sqgs/scan", self.platform_url)
+    def get_scan_SQGS(self):
+        url = _get_url("/api/v2/sqgs/scan", self.platform_url)
         response = requests.get(url, headers=self.headers)
         if response.ok:
             return response.json()
         else:
             raise Exception(f"Can't read scan sqg's: {response.text}")
 
-    def getScanCompliance(self, taskId):
-        url = _getUrl("/api/v2/sqgs/reportComplianceStatus", self.platform_url)
+    def get_scan_compliance(self, task_id):
+        url = _get_url("/api/v2/sqgs/reportComplianceStatus",
+                       self.platform_url)
         response = requests.get(
             url, headers=self.headers, params={
-                "reportType": "scan", "taskId": taskId}
+                "reportType": "scan", "taskId": task_id}
         )
         if response.ok:
             return response.json()
         else:
             raise Exception(
-                f"Can't read sqg compliance for task {taskId}: {response.text}")
-    def checkSqg(self, sqgs, compl):
+                f"Can't read sqg compliance for task {task_id}: {response.text}")
+
+    def check_sqg(self, sqgs, compl):
         if "processingDetails" in compl:
             errors = []
             for details in compl["processingDetails"]:
@@ -123,18 +127,15 @@ class ScanService:
                         name = sqg["name"]
                         blockingRules = details["blockingRules"]
                         errors.append(
-                            f"Fail SQG \"{name}\" blocking by rules: {blockingRules}")
+                            f"  Fail SQG \"{name}\", blocking by rules: {blockingRules}")
             if len(errors) > 0:
                 errors = '\n'.join(str(item) for item in errors)
-                raise Exception(f"Fails next scan SQG's: \n{errors}")
-        print("All SQG's pass successfull")
+                return errors
 
 
-
-def _getHeaders(api_key):
+def _get_headers(api_key):
     return {"Content-Type": "application/json", "X-API-KEY": api_key}
 
 
-def _getUrl(path, platformUrl):
+def _get_url(path, platformUrl):
     return platformUrl + "/" + path
-

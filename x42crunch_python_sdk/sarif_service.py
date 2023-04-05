@@ -1,7 +1,7 @@
-import x42crunch_python_sdk.src.parser as parser
+import x42crunch_python_sdk.parser as parser
 
 
-def produceSarifFromScanReports(scanReports):
+def produce_sarif_from_scan_reports(scanReports):
     sarifArtifactIndices = {}
     sarifResults = []
     sarifFiles = {}

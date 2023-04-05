@@ -3,7 +3,7 @@ description: "The API Conformance Scan action adds an automatic static Conforman
 inputs:
   api-token:
     description: "The API token to access 42Crunch Platform. Please create free account at https://platform.42crunch.com/register and follow hese steps to configure API_TOKEN https://docs.42crunch.com/latest/content/tasks/integrate_github_actions.htm"
-    required: false
+    required: true
   platform-url:
     description: "42Crunch platform URL"
     required: false
@@ -27,8 +27,8 @@ runs:
   using: "docker"
   image: "Dockerfile"
   env:
-    X42_API_KEY: ${{ inputs.api-token }}
-    X42_PLATFORM_URL: ${{ inputs.platform-url }}
+    X42C_API_TOKEN: ${{ inputs.api-token }}
+    X42C_PLATFORM_URL: ${{ inputs.platform-url }}
     report_path: ${{ inputs.report-path }}
     sarif_path: ${{inputs.sarif-path}}
     command: ${{inputs.command}}

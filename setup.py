@@ -9,7 +9,7 @@ setup(
     install_requires=["click"],
     entry_points={
         'console_scripts': [
-            'xliic_scan = x42crunch_python_sdk.scripts.xliic_scan:_scan',
+            'xliic_scan = x42crunch_python_sdk.cli.xliic_scan:scan',
         ],
     },
 )
